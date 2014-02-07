@@ -38,6 +38,14 @@ competitors.each_with_index do |competitor, index|
       clean = result.text.delete!("\n")
       current_place = /\d+th|\d+rd|\d+T|WD|CUT/.match(clean)
 
+      points = /\d+ pts/.match(clean)
+      if points.nil?
+        real_points = 0
+      else
+        real_points = points[0].split(" pts")[0].to_i
+      end
+      individual["results"][competition_categories[index - 2]]["points"] = real_points
+
       if current_place.nil?
         individual["results"][competition_categories[index - 2]]["place"] = -1
       elsif current_place[0] == "WD" || current_place[0] == "CUT"
@@ -47,7 +55,7 @@ competitors.each_with_index do |competitor, index|
         individual["results"][competition_categories[index - 2]]["place"] = individual_place.to_i
       end
     end
-    puts "*" * 80
+    # puts "*" * 80
   end
   final_results << individual if !individual.empty?
 end
